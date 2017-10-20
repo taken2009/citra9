@@ -24,6 +24,11 @@ public:
 private:
     void setConfiguration();
 
+private slots:
+    void showLayoutBackgroundDialog();
+
 private:
+    QColor bg_color;
+
     std::unique_ptr<Ui::ConfigureGraphics> ui;
 };
