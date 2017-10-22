@@ -59,6 +59,7 @@ static std::array<std::unique_ptr<Input::ButtonDevice>, Settings::NativeButton::
 static std::unique_ptr<Input::AnalogDevice> circle_pad;
 static std::unique_ptr<Input::MotionDevice> motion_device;
 static std::unique_ptr<Input::TouchDevice> touch_device;
+static PadState inputs_this_frame;
 
 DirectionState GetStickDirectionState(s16 circle_pad_x, s16 circle_pad_y) {
     // 30 degree and 60 degree are angular thresholds for directions
@@ -140,6 +141,7 @@ static void UpdatePadCallback(u64 userdata, int cycles_late) {
     state.circle_down.Assign(direction.down);
     state.circle_left.Assign(direction.left);
     state.circle_right.Assign(direction.right);
+    inputs_this_frame.hex = state.hex;
 
     mem->pad.current_state.hex = state.hex;
     mem->pad.index = next_pad_index;
@@ -271,6 +273,10 @@ static void UpdateGyroscopeCallback(u64 userdata, int cycles_late) {
 
     // Reschedule recurrent event
     CoreTiming::ScheduleEvent(gyroscope_update_ticks - cycles_late, gyroscope_update_event);
+}
+
+PadState& GetInputsThisFrame() {
+    return inputs_this_frame;
 }
 
 void GetIPCHandles(Service::Interface* self) {

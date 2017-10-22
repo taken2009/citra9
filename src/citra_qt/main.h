@@ -130,6 +130,7 @@ private slots:
     void OnMenuRecentFile();
     void OnSwapScreens();
     void OnConfigure();
+    void OnCheats();
     void OnToggleFilterBar();
     void OnDisplayTitleBars(bool);
     void ToggleFullscreen();
@@ -177,6 +178,7 @@ private:
 
     bool explicit_update_check = false;
     bool defer_update_prompt = false;
+    std::shared_ptr<class CheatDialog> cheatWindow;
 
     QAction* actions_recent_files[max_recent_files_item];
 
