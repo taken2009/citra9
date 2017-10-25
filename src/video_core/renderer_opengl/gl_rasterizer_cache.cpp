@@ -948,7 +948,7 @@ SurfaceSurfaceRect_Tuple RasterizerCacheOpenGL::GetFramebufferSurfaces(
     }
 
     if (color_surface != nullptr) {
-        ValidateSurface(color_surface, boost::icl::first(color_vp_interval), boost::icl::length(color_vp_interval));
+        //ValidateSurface(color_surface, boost::icl::first(color_vp_interval), boost::icl::length(color_vp_interval));
     }
     if (depth_surface != nullptr) {
         ValidateSurface(depth_surface, boost::icl::first(depth_vp_interval), boost::icl::length(depth_vp_interval));
@@ -1071,7 +1071,7 @@ void RasterizerCacheOpenGL::ValidateSurface(const Surface& surface, PAddr addr, 
         }
 
         // Load data from 3DS memory
-        FlushRegion(interval_start, interval_end - interval_start);
+        //FlushRegion(interval_start, interval_end - interval_start);
         surface->DownloadGLTexture();
         surface->LoadGLBuffer(interval_start, interval_end);
         upload_texture = true;
