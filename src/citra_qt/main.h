@@ -7,6 +7,7 @@
 #include <memory>
 #include <QMainWindow>
 #include <QTimer>
+#include <QTranslator>
 #include "core/core.h"
 #include "ui_main.h"
 
@@ -137,6 +138,8 @@ private slots:
     void ToggleWindowMode();
     void OnCreateGraphicsSurfaceViewer();
     void OnCoreError(Core::System::ResultStatus, std::string);
+    void OnLoadTranslation();
+    void OnUnloadTranslation();
     /// Called whenever a user selects Help->About Citra
     void OnMenuAboutCitra();
     void OnUpdateFound(bool found, bool error);
@@ -145,6 +148,8 @@ private slots:
 
 private:
     void UpdateStatusBar();
+    void LoadTranslation();
+    void SetupUIStrings();
 
     Ui::MainWindow ui;
 
@@ -181,6 +186,8 @@ private:
     std::shared_ptr<class CheatDialog> cheatWindow;
 
     QAction* actions_recent_files[max_recent_files_item];
+
+    QTranslator translator;
 
 protected:
     void dropEvent(QDropEvent* event) override;
