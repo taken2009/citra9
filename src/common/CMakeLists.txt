@@ -45,6 +45,7 @@ set(SRCS
 set(HEADERS
             alignment.h
             assert.h
+            avx_utils.h
             bit_field.h
             bit_set.h
             break_points.h

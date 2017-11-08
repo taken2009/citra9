@@ -5,6 +5,7 @@
 #include <cstring>
 #include <dynarmic/dynarmic.h>
 #include "common/assert.h"
+#include "common/avx_utils.h"
 #include "common/microprofile.h"
 #include "core/arm/dynarmic/arm_dynarmic.h"
 #include "core/arm/dynarmic/arm_dynarmic_cp15.h"
@@ -130,6 +131,7 @@ void ARM_Dynarmic::ExecuteInstructions(int num_instructions) {
     ASSERT(Memory::GetCurrentPageTable() == current_page_table);
     MICROPROFILE_SCOPE(ARM_Jit);
 
+    ZeroUpperAVX();
     std::size_t ticks_executed = jit->Run(static_cast<unsigned>(num_instructions));
 
     CoreTiming::AddTicks(4000);
