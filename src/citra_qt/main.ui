@@ -192,6 +192,12 @@
       <addaction name="separator"/>
       <addaction name="action_Toolbar_Configure"/>
       <addaction name="action_Toolbar_Cheats"/>
+      <addaction name="separator"/>
+      <addaction name="action_Toolbar_View_Lobby"/>
+      <addaction name="action_Toolbar_Start_Room"/>
+      <addaction name="action_Toolbar_Stop_Room"/>
+      <addaction name="action_Toolbar_Connect_To_Room"/>
+      <addaction name="action_Toolbar_Chat"/>
     </widget>
   <action name="action_Load_File">
    <property name="text">
@@ -477,6 +483,86 @@
       </property>
       <property name="toolTip">
         <string>Cheats</string>
+      </property>
+    </action>
+    <action name="action_Toolbar_View_Lobby">
+      <property name="enabled">
+        <bool>true</bool>
+      </property>
+      <property name="icon">
+        <iconset resource="../../dist/toolbar_icons/toolbar_icons.qrc">
+          <normaloff>:/toolbar_icons/rc/Lobby.png</normaloff>:/toolbar_icons/rc/Lobby.png
+        </iconset>
+      </property>
+      <property name="text">
+        <string>Browse Public Game Lobby</string>
+      </property>
+      <property name="toolTip">
+        <string>Browse Public Game Lobby</string>
+      </property>
+    </action>
+    <action name="action_Toolbar_Start_Room">
+      <property name="enabled">
+        <bool>true</bool>
+      </property>
+      <property name="icon">
+        <iconset resource="../../dist/toolbar_icons/toolbar_icons.qrc">
+          <normaloff>:/toolbar_icons/rc/open.png</normaloff>:/toolbar_icons/rc/open.png
+        </iconset>
+      </property>
+      <property name="text">
+        <string>Create Room</string>
+      </property>
+      <property name="toolTip">
+        <string>Create Room</string>
+      </property>
+    </action>
+    <action name="action_Toolbar_Stop_Room">
+      <property name="enabled">
+        <bool>false</bool>
+      </property>
+      <property name="icon">
+        <iconset resource="../../dist/toolbar_icons/toolbar_icons.qrc">
+          <normaloff>:/toolbar_icons/rc/close.png</normaloff>:/toolbar_icons/rc/close.png
+        </iconset>
+      </property>
+      <property name="text">
+        <string>Close Room</string>
+      </property>
+      <property name="toolTip">
+        <string>Close Room</string>
+      </property>
+    </action>
+    <action name="action_Toolbar_Connect_To_Room">
+      <property name="enabled">
+        <bool>true</bool>
+      </property>
+      <property name="icon">
+        <iconset resource="../../dist/toolbar_icons/toolbar_icons.qrc">
+          <normaloff>:/toolbar_icons/rc/direct.png</normaloff>:/toolbar_icons/rc/direct.png
+        </iconset>
+      </property>
+      <property name="text">
+        <string>Direct Connect to Room</string>
+      </property>
+      <property name="toolTip">
+        <string>Direct Connect to Room</string>
+      </property>
+    </action>
+    <action name="action_Toolbar_Chat">
+      <property name="enabled">
+        <bool>false</bool>
+      </property>
+      <property name="icon">
+        <iconset resource="../../dist/toolbar_icons/toolbar_icons.qrc">
+          <normaloff>:/toolbar_icons/rc/chat.png</normaloff>:/toolbar_icons/rc/chat.png
+        </iconset>
+      </property>
+      <property name="text">
+        <string>Chat</string>
+      </property>
+      <property name="toolTip">
+        <string>Chat</string>
       </property>
     </action>
   <action name="action_Open_Maintenance_Tool">

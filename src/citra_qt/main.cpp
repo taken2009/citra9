@@ -551,6 +551,13 @@ void GMainWindow::ConnectToolbarEvents(){
 
     // Cheats
     connect(ui.action_Toolbar_Cheats, &QAction::triggered, this, &GMainWindow::OnCheats);
+
+    // multiplayer
+    connect(ui.action_Toolbar_View_Lobby, &QAction::triggered, this, &GMainWindow::OnViewLobby);
+    connect(ui.action_Toolbar_Start_Room, &QAction::triggered, this, &GMainWindow::OnCreateRoom);
+    connect(ui.action_Toolbar_Stop_Room, &QAction::triggered, this, &GMainWindow::OnCloseRoom);
+    connect(ui.action_Toolbar_Connect_To_Room, &QAction::triggered, this, &GMainWindow::OnDirectConnectToRoom);
+    connect(ui.action_Toolbar_Chat, &QAction::triggered, this, &GMainWindow::OnOpenNetworkRoom);
 }
 
 void GMainWindow::OnDisplayTitleBars(bool show) {
@@ -788,6 +795,9 @@ void GMainWindow::ShutdownGame() {
     ui.action_Toolbar_Stop->setEnabled(false);
     ui.action_Toolbar_Cheats->setEnabled(false);
     ui.action_Toolbar_Reset->setEnabled(false);
+    ui.action_Toolbar_Start_Room->setEnabled(true);
+    ui.action_Toolbar_Stop_Room->setEnabled(false);
+    ui.action_Toolbar_Chat->setEnabled(false);
     ui.action_Cheats->setEnabled(false);
     ui.action_Start->setEnabled(false);
     ui.action_Start->setText(tr("Start"));
@@ -1005,10 +1015,12 @@ void GMainWindow::OnNetworkStateChanged(const Network::RoomMember::State& state)
     if (state == Network::RoomMember::State::Joined) {
         network_status->setPixmap(QPixmap(":/icons/connected.png"));
         ui.action_Chat->setEnabled(true);
+        ui.action_Toolbar_Chat->setEnabled(true);
         return;
     }
     network_status->setPixmap(QPixmap(":/icons/disconnected.png"));
     ui.action_Chat->setDisabled(true);
+    ui.action_Toolbar_Chat->setDisabled(true);
 
     ChangeRoomState();
 }
@@ -1310,6 +1322,8 @@ void GMainWindow::OnCreateRoom() {
         });
     }
     BringWidgetToFront(host_room);
+    ui.action_Toolbar_Start_Room->setDisabled(true);
+    ui.action_Toolbar_Stop_Room->setEnabled(true);
 }
 
 void GMainWindow::OnCloseRoom() {
@@ -1322,6 +1336,8 @@ void GMainWindow::OnCloseRoom() {
             }
         }
     }
+    ui.action_Toolbar_Stop_Room->setDisabled(true);
+    ui.action_Toolbar_Start_Room->setEnabled(true);
 }
 
 void GMainWindow::OnOpenNetworkRoom() {
