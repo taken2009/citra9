@@ -11,7 +11,6 @@ set(SRCS
             configuration/configure_general.cpp
             configuration/configure_graphics.cpp
             configuration/configure_input.cpp
-            configuration/configure_input_widget.cpp
             configuration/configure_system.cpp
             configuration/configure_web.cpp
             debugger/graphics/graphics.cpp
@@ -46,7 +45,6 @@ set(HEADERS
             configuration/configure_general.h
             configuration/configure_graphics.h
             configuration/configure_input.h
-            configuration/configure_input_widget.h
             configuration/configure_system.h
             configuration/configure_web.h
             debugger/graphics/graphics.h
