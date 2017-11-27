@@ -805,6 +805,7 @@ void GMainWindow::OnPauseGame() {
 }
 
 void GMainWindow::OnResetGame() {
+    ShutdownGame();
     BootGame(current_game_path);
 }
 
