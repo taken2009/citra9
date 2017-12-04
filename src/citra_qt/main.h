@@ -13,6 +13,7 @@
 #include "ui_main.h"
 
 class AboutDialog;
+class CheatDialog;
 class Config;
 class EmuThread;
 class GameList;
