@@ -13,6 +13,8 @@
 #include "core/core.h"
 #include "core/core_timing.h"
 #include "core/hle/kernel/svc.h"
+#include "core/hle/kernel/process.h"
+#include "core/hle/kernel/vm_manager.h"
 #include "core/memory.h"
 #include "core/settings.h"
 
@@ -90,6 +92,15 @@ static void InterpreterFallback(u32 pc, Dynarmic::Jit* jit, void* user_arg) {
     jit->SetFpscr(state->VFP[VFP_FPSCR]);
 }
 
+static bool IsCodeMemory(u32 vaddr) {
+    auto it = Kernel::g_current_process->vm_manager.FindVMA(vaddr);
+    if (it == Kernel::g_current_process->vm_manager.vma_map.end())
+        return false;
+    if (static_cast<int>(it->second.permissions) & static_cast<int>(Kernel::VMAPermission::Write))
+        return false;
+    return it->second.meminfo_state == Kernel::MemoryState::Code;
+}
+
 static bool IsReadOnlyMemory(u32 vaddr) {
     // TODO(bunnei): ImplementMe
     return false;
@@ -108,6 +119,14 @@ static u64 GetTicksRemaining() {
     return static_cast<u64>(ticks <= 0 ? 0 : ticks);
 }
 
+static u32 ReadCode(u32 vaddr) {
+    if (!IsCodeMemory(vaddr)) {
+        LOG_CRITICAL(Core_ARM11, "Tried to execute PC=0x%08x", vaddr);
+        return 0xEAFFFFFE; // b +#0 ; infinite loop
+    }
+    return Memory::Read32(vaddr);
+}
+
 static Dynarmic::UserCallbacks GetUserCallbacks(
     const std::shared_ptr<ARMul_State>& interpreter_state, Memory::PageTable* current_page_table) {
     Dynarmic::UserCallbacks user_callbacks{};
@@ -115,7 +134,7 @@ static Dynarmic::UserCallbacks GetUserCallbacks(
     user_callbacks.user_arg = static_cast<void*>(interpreter_state.get());
     user_callbacks.CallSVC = &Kernel::CallSVC;
     user_callbacks.memory.IsReadOnlyMemory = &IsReadOnlyMemory;
-    user_callbacks.memory.ReadCode = &Memory::Read32;
+    user_callbacks.memory.ReadCode = &ReadCode;
     user_callbacks.memory.Read8 = &Memory::Read8;
     user_callbacks.memory.Read16 = &Memory::Read16;
     user_callbacks.memory.Read32 = &Memory::Read32;
