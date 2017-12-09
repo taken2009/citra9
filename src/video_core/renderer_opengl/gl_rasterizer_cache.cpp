@@ -20,6 +20,7 @@
 #include "common/scope_exit.h"
 #include "common/vector_math.h"
 #include "core/frontend/emu_window.h"
+#include "core/hle/kernel/process.h"
 #include "core/memory.h"
 #include "core/settings.h"
 #include "video_core/pica_state.h"
@@ -949,7 +950,9 @@ SurfaceSurfaceRect_Tuple RasterizerCacheOpenGL::GetFramebufferSurfaces(
     }
 
     if (color_surface != nullptr) {
-        ValidateSurface(color_surface, boost::icl::first(color_vp_interval), boost::icl::length(color_vp_interval));
+         if (Kernel::g_current_process->codeset->program_id != 0x0004000000199200)
+             ValidateSurface(color_surface, boost::icl::first(color_vp_interval), boost::icl::length(color_vp_interval));
+                    // DragonQuest XI JPN   Title ID: 0004000000199200
     }
     if (depth_surface != nullptr) {
         ValidateSurface(depth_surface, boost::icl::first(depth_vp_interval), boost::icl::length(depth_vp_interval));
@@ -1072,7 +1075,9 @@ void RasterizerCacheOpenGL::ValidateSurface(const Surface& surface, PAddr addr, 
         }
 
         // Load data from 3DS memory
-        FlushRegion(interval_start, interval_end - interval_start);
+        if (Kernel::g_current_process->codeset->program_id != 0x0004000000199200)
+            FlushRegion(interval_start, interval_end - interval_start);
+            // DragonQuest XI JPN   Title ID: 0004000000199200
         surface->DownloadGLTexture();
         surface->LoadGLBuffer(interval_start, interval_end);
         upload_texture = true;
