@@ -23,6 +23,7 @@ namespace Service {
 namespace HID {
 
 static std::weak_ptr<Module> current_module;
+static PadState inputs_this_frame;
 
 // Updating period for each HID device. These empirical values are measured from a 11.2 3DS.
 constexpr u64 pad_update_ticks = BASE_CLOCK_RATE_ARM11 / 234;
@@ -127,6 +128,7 @@ void Module::UpdatePadCallback(u64 userdata, int cycles_late) {
     pad_entry.delta_removals.hex = changed.hex & old_state.hex;
     pad_entry.circle_pad_x = circle_pad_x;
     pad_entry.circle_pad_y = circle_pad_y;
+    inputs_this_frame.hex = state.hex;
 
     // If we just updated index 0, provide a new timestamp
     if (mem->pad.index == 0) {
@@ -164,6 +166,10 @@ void Module::UpdatePadCallback(u64 userdata, int cycles_late) {
 
     // Reschedule recurrent event
     CoreTiming::ScheduleEvent(pad_update_ticks - cycles_late, pad_update_event);
+}
+
+PadState& GetInputsThisFrame() {
+    return inputs_this_frame;
 }
 
 void Module::UpdateAccelerometerCallback(u64 userdata, int cycles_late) {
