@@ -11,6 +11,7 @@
 #include "core/arm/dynarmic/arm_dynarmic.h"
 #endif
 #include "core/arm/dyncom/arm_dyncom.h"
+#include "core/cheat_core.h"
 #include "core/core.h"
 #include "core/core_timing.h"
 #include "core/gdbstub/gdbstub.h"
@@ -167,6 +168,7 @@ System::ResultStatus System::Init(EmuWindow* emu_window, u32 system_mode) {
     Kernel::Init(system_mode);
     Service::Init();
     AudioCore::Init();
+    CheatCore::Init();
     GDBStub::Init();
     Movie::GetInstance().Init();
 
@@ -197,6 +199,7 @@ void System::Shutdown() {
     Movie::GetInstance().Shutdown();
     GDBStub::Shutdown();
     AudioCore::Shutdown();
+    CheatCore::Shutdown();
     VideoCore::Shutdown();
     Service::Shutdown();
     Kernel::Shutdown();
