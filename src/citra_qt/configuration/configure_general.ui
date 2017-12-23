@@ -85,6 +85,13 @@
             </property>
            </widget>
           </item>
+          <item>
+           <widget class="QCheckBox" name="toggle_is_new_3ds">
+            <property name="text">
+             <string>New 3DS Mode</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </item>
        </layout>
