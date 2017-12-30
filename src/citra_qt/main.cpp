@@ -333,6 +333,8 @@ void GMainWindow::RestoreUIState() {
 
     ui.action_Show_Status_Bar->setChecked(UISettings::values.show_status_bar);
     statusBar()->setVisible(ui.action_Show_Status_Bar->isChecked());
+
+    ui.action_Show_Toolbar->setChecked(UISettings::values.Show_Toolbar);
 }
 
 void GMainWindow::ConnectWidgetEvents() {
@@ -378,6 +380,8 @@ void GMainWindow::ConnectMenuEvents() {
     connect(ui.action_Show_Status_Bar, &QAction::triggered, statusBar(), &QStatusBar::setVisible);
     ui.action_Fullscreen->setShortcut(GetHotkey("Main Window", "Fullscreen", this)->key());
     connect(ui.action_Fullscreen, &QAction::triggered, this, &GMainWindow::ToggleFullscreen);
+    connect(ui.action_Show_Toolbar, &QAction::triggered, this, &GMainWindow::Onshowtoolbar);
+    ui.action_Show_Toolbar->setShortcut(tr("CTRL+D"));
 
     // Help
     connect(ui.action_FAQ, &QAction::triggered,
@@ -897,6 +901,8 @@ void GMainWindow::ShowFullscreen() {
         ui.menubar->hide();
         statusBar()->hide();
         showFullScreen();
+        if(ui.action_Show_Toolbar->isChecked())
+            ui.toolbar->hide();
     } else {
         UISettings::values.renderwindow_geometry = render_window->saveGeometry();
         render_window->showFullScreen();
@@ -909,6 +915,8 @@ void GMainWindow::HideFullscreen() {
         ui.menubar->show();
         showNormal();
         restoreGeometry(UISettings::values.geometry);
+        if(ui.action_Show_Toolbar->isChecked())
+            ui.toolbar->show();
     } else {
         render_window->showNormal();
         render_window->restoreGeometry(UISettings::values.renderwindow_geometry);
@@ -947,6 +955,14 @@ void GMainWindow::OnConfigure() {
         configureDialog.applyConfiguration();
         UpdateUITheme();
         config->Save();
+    }
+}
+
+void GMainWindow::Onshowtoolbar(){
+    if (ui.action_Show_Toolbar->isChecked()){
+        ui.toolbar->show();
+    }else{
+        ui.toolbar->hide();
     }
 }
 
@@ -1092,6 +1108,7 @@ void GMainWindow::closeEvent(QCloseEvent* event) {
     UISettings::values.display_titlebar = ui.action_Display_Dock_Widget_Headers->isChecked();
     UISettings::values.show_filter_bar = ui.action_Show_Filter_Bar->isChecked();
     UISettings::values.show_status_bar = ui.action_Show_Status_Bar->isChecked();
+    UISettings::values.Show_Toolbar = ui.action_Show_Toolbar->isChecked();
     UISettings::values.first_start = false;
 
     game_list->SaveInterfaceLayout();

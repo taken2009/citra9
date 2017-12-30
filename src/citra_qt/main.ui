@@ -102,6 +102,7 @@
     <addaction name="action_Display_Dock_Widget_Headers"/>
     <addaction name="action_Show_Filter_Bar"/>
     <addaction name="action_Show_Status_Bar"/>
+    <addaction name="action_Show_Toolbar"/>
     <addaction name="menu_View_Debugging"/>
    </widget>
    <widget class="QMenu" name="menu_Help">
@@ -253,6 +254,14 @@
    </property>
    <property name="text">
     <string>Show Status Bar</string>
+   </property>
+  </action>
+  <action name="action_Show_Toolbar">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Tool Bar</string>
    </property>
   </action>
   <action name="action_Select_Game_List_Root">
