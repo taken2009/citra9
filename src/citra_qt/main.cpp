@@ -118,6 +118,7 @@ GMainWindow::GMainWindow() : config(new Config()), emu_thread(nullptr) {
 
     ConnectMenuEvents();
     ConnectWidgetEvents();
+    ConnectToolbarEvents();
 
     SetupUIStrings();
     SetupUIStringsT();
@@ -273,6 +274,7 @@ void GMainWindow::InitializeHotkeys() {
     RegisterHotkey("Main Window", "Load File", QKeySequence::Open);
     RegisterHotkey("Main Window", "Swap Screens", QKeySequence::NextChild);
     RegisterHotkey("Main Window", "Start Emulation");
+    RegisterHotkey("Main Window", "Reset Game", QKeySequence(tr("F12")));
     RegisterHotkey("Main Window", "Fullscreen", QKeySequence::FullScreen);
     RegisterHotkey("Main Window", "Exit Fullscreen", QKeySequence(Qt::Key_Escape),
                    Qt::ApplicationShortcut);
@@ -286,6 +288,8 @@ void GMainWindow::InitializeHotkeys() {
             &GMainWindow::OnMenuLoadFile);
     connect(GetHotkey("Main Window", "Start Emulation", this), &QShortcut::activated, this,
             &GMainWindow::OnStartGame);
+    connect(GetHotkey("Main Window", "Reset Game", this), &QShortcut::activated, this,
+            &GMainWindow::OnResetGame);
     connect(GetHotkey("Main Window", "Swap Screens", render_window), &QShortcut::activated, this,
             &GMainWindow::OnSwapScreens);
     connect(GetHotkey("Main Window", "Fullscreen", render_window), &QShortcut::activated,
@@ -359,6 +363,8 @@ void GMainWindow::RestoreUIState() {
 
     ui.action_Show_Status_Bar->setChecked(UISettings::values.show_status_bar);
     statusBar()->setVisible(ui.action_Show_Status_Bar->isChecked());
+
+    ui.action_Show_Toolbar->setChecked(UISettings::values.Show_Toolbar);
 }
 
 void GMainWindow::ConnectWidgetEvents() {
@@ -393,6 +399,7 @@ void GMainWindow::ConnectMenuEvents() {
     connect(ui.action_Stop, &QAction::triggered, this, &GMainWindow::OnStopGame);
     connect(ui.action_Report_Compatibility, &QAction::triggered, this,
             &GMainWindow::OnMenuReportCompatibility);
+    connect(ui.action_Reset, &QAction::triggered, this, &GMainWindow::OnResetGame);
     connect(ui.action_Configure, &QAction::triggered, this, &GMainWindow::OnConfigure);
     connect(ui.action_Cheats, SIGNAL(triggered()), this, SLOT(OnCheats()));
 
@@ -404,6 +411,8 @@ void GMainWindow::ConnectMenuEvents() {
     ui.action_Show_Filter_Bar->setShortcut(tr("CTRL+F"));
     connect(ui.action_Show_Filter_Bar, &QAction::triggered, this, &GMainWindow::OnToggleFilterBar);
     connect(ui.action_Show_Status_Bar, &QAction::triggered, statusBar(), &QStatusBar::setVisible);
+    connect(ui.action_Show_Toolbar, &QAction::triggered, this, &GMainWindow::Onshowtoolbar);
+    ui.action_Show_Toolbar->setShortcut(tr("CTRL+D"));
     ui.action_Fullscreen->setShortcut(GetHotkey("Main Window", "Fullscreen", this)->key());
     connect(ui.action_Fullscreen, &QAction::triggered, this, &GMainWindow::ToggleFullscreen);
 
@@ -415,6 +424,41 @@ void GMainWindow::ConnectMenuEvents() {
             &GMainWindow::OnCheckForUpdates);
     connect(ui.action_Open_Maintenance_Tool, &QAction::triggered, this,
             &GMainWindow::OnOpenUpdater);
+}
+
+void GMainWindow::ConnectToolbarEvents(){
+    // File
+    connect(ui.action_Toolbar_Load_File, &QAction::triggered, this, &GMainWindow::OnMenuLoadFile);
+
+    // Toggle fullscreen
+    connect(ui.action_Toolbar_Toggle_Fullscreen, &QAction::triggered, this, [this] {
+        if (isFullScreen()) {
+            showNormal();
+            ui.action_Toolbar_Toggle_Fullscreen->setIcon(QIcon(":toolbar_icons/rc/fullscreen.png"));
+        } else {
+            showFullScreen();
+            ui.action_Toolbar_Toggle_Fullscreen->setIcon(QIcon(":toolbar_icons/rc/fullscreen_exit.png"));
+        }
+     } );
+
+    // Emulation
+    connect(ui.action_Toolbar_Stop, &QAction::triggered, this, &GMainWindow::OnStopGame);
+    connect(ui.action_Toolbar_Start_Pause, &QAction::triggered, this, [this] {
+        if (emulation_running) {
+            OnPauseGame();
+            emulation_running = false;
+        } else {
+            OnStartGame();
+            emulation_running = true;
+        }
+    } );
+    connect(ui.action_Toolbar_Reset, &QAction::triggered, this, &GMainWindow::OnResetGame);
+
+    // Configure
+    connect(ui.action_Toolbar_Configure, &QAction::triggered, this, &GMainWindow::OnConfigure);
+
+    // Cheats
+    connect(ui.action_Toolbar_Cheats, &QAction::triggered, this, &GMainWindow::OnCheats);
 }
 
 void GMainWindow::OnDisplayTitleBars(bool show) {
@@ -618,6 +662,7 @@ void GMainWindow::BootGame(const QString& filename) {
     render_window->show();
     render_window->setFocus();
 
+    current_game_path = filename;
     emulation_running = true;
     if (ui.action_Fullscreen->isChecked()) {
         ShowFullscreen();
@@ -645,12 +690,19 @@ void GMainWindow::ShutdownGame() {
     disconnect(render_window, &GRenderWindow::Closed, this, &GMainWindow::OnStopGame);
 
     // Update the GUI
+    ui.action_Toolbar_Start_Pause->setEnabled(false);
+    ui.action_Toolbar_Start_Pause->setIcon(QIcon(":toolbar_icons/rc/play.png"));
+    ui.action_Toolbar_Start_Pause->setToolTip(tr("Start"));
+    ui.action_Toolbar_Stop->setEnabled(false);
+    ui.action_Toolbar_Cheats->setEnabled(false);
+    ui.action_Toolbar_Reset->setEnabled(false);
     ui.action_Cheats->setEnabled(false);
     ui.action_Start->setEnabled(false);
     ui.action_Start->setText(tr("Start"));
     ui.action_Pause->setEnabled(false);
     ui.action_Stop->setEnabled(false);
     ui.action_Report_Compatibility->setEnabled(false);
+    ui.action_Reset->setEnabled(false);
     render_window->hide();
     game_list->show();
     game_list->setFilterFocus();
@@ -834,6 +886,15 @@ void GMainWindow::OnStartGame() {
     ui.action_Pause->setEnabled(true);
     ui.action_Stop->setEnabled(true);
     ui.action_Report_Compatibility->setEnabled(true);
+    ui.action_Reset->setEnabled(true);
+
+    ui.action_Toolbar_Start_Pause->setEnabled(true);
+    ui.action_Toolbar_Start_Pause->setIcon(QIcon(":toolbar_icons/rc/pause.png"));
+    ui.action_Toolbar_Start_Pause->setToolTip(tr("Pause"));
+
+    ui.action_Toolbar_Stop->setEnabled(true);
+    ui.action_Toolbar_Cheats->setEnabled(true);
+    ui.action_Toolbar_Reset->setEnabled(true);
 }
 
 void GMainWindow::OnPauseGame() {
@@ -842,6 +903,14 @@ void GMainWindow::OnPauseGame() {
     ui.action_Start->setEnabled(true);
     ui.action_Pause->setEnabled(false);
     ui.action_Stop->setEnabled(true);
+
+    ui.action_Toolbar_Start_Pause->setIcon(QIcon(":toolbar_icons/rc/play.png"));
+    ui.action_Toolbar_Start_Pause->setToolTip(tr("Continue"));
+}
+
+void GMainWindow::OnResetGame() {
+    ShutdownGame();
+    BootGame(current_game_path);
 }
 
 void GMainWindow::OnStopGame() {
@@ -878,6 +947,8 @@ void GMainWindow::ShowFullscreen() {
         ui.menubar->hide();
         statusBar()->hide();
         showFullScreen();
+        if(ui.action_Show_Toolbar->isChecked())
+            ui.toolbar->hide();
     } else {
         UISettings::values.renderwindow_geometry = render_window->saveGeometry();
         render_window->showFullScreen();
@@ -890,6 +961,8 @@ void GMainWindow::HideFullscreen() {
         ui.menubar->show();
         showNormal();
         restoreGeometry(UISettings::values.geometry);
+        if(ui.action_Show_Toolbar->isChecked())
+            ui.toolbar->show();
     } else {
         render_window->showNormal();
         render_window->restoreGeometry(UISettings::values.renderwindow_geometry);
@@ -933,6 +1006,14 @@ void GMainWindow::OnConfigure() {
     }
 }
 
+void GMainWindow::Onshowtoolbar(){
+    if (ui.action_Show_Toolbar->isChecked()){
+        ui.toolbar->show();
+    }else{
+        ui.toolbar->hide();
+    }
+}
+ 
 void GMainWindow::OnToggleFilterBar() {
     game_list->setFilterVisible(ui.action_Show_Filter_Bar->isChecked());
     if (ui.action_Show_Filter_Bar->isChecked()) {
@@ -1083,6 +1164,7 @@ void GMainWindow::closeEvent(QCloseEvent* event) {
     UISettings::values.display_titlebar = ui.action_Display_Dock_Widget_Headers->isChecked();
     UISettings::values.show_filter_bar = ui.action_Show_Filter_Bar->isChecked();
     UISettings::values.show_status_bar = ui.action_Show_Status_Bar->isChecked();
+    UISettings::values.Show_Toolbar = ui.action_Show_Toolbar->isChecked();
     UISettings::values.first_start = false;
 
     game_list->SaveInterfaceLayout();
