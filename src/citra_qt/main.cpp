@@ -273,6 +273,7 @@ void GMainWindow::InitializeRecentFileMenuActions() {
 void GMainWindow::InitializeHotkeys() {
     RegisterHotkey("Main Window", "Load File", QKeySequence::Open);
     RegisterHotkey("Main Window", "Start Emulation");
+    RegisterHotkey("Main Window", "Reset Game", QKeySequence(tr("F12")));
     RegisterHotkey("Main Window", "Swap Screens", QKeySequence(tr("F9")));
     RegisterHotkey("Main Window", "Toggle Screen Layout", QKeySequence(tr("F10")));
     RegisterHotkey("Main Window", "Fullscreen", QKeySequence::FullScreen);
@@ -284,6 +285,8 @@ void GMainWindow::InitializeHotkeys() {
             SLOT(OnMenuLoadFile()));
     connect(GetHotkey("Main Window", "Start Emulation", this), SIGNAL(activated()), this,
             SLOT(OnStartGame()));
+    connect(GetHotkey("Main Window", "Reset Game", this), &QShortcut::activated, this,
+            &GMainWindow::OnResetGame);
     connect(GetHotkey("Main Window", "Swap Screens", render_window), &QShortcut::activated,
             ui.action_Screen_Layout_Swap_Screens, &QAction::trigger);
     connect(GetHotkey("Main Window", "Toggle Screen Layout", render_window), &QShortcut::activated, this,
@@ -440,7 +443,6 @@ void GMainWindow::ConnectToolbarEvents(){
         }
     } );
     connect(ui.action_Toolbar_Reset, &QAction::triggered, this, &GMainWindow::OnResetGame);
-    ui.action_Toolbar_Reset->setShortcut(tr("F12"));
 
     // Configure
     connect(ui.action_Toolbar_Configure, &QAction::triggered, this, &GMainWindow::OnConfigure);
