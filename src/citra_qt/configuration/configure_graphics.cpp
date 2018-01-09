@@ -19,6 +19,7 @@ ConfigureGraphics::ConfigureGraphics(QWidget* parent)
     ui->frame_limit->setEnabled(Settings::values.use_frame_limit);
     connect(ui->toggle_frame_limit, &QCheckBox::stateChanged, ui->frame_limit,
             &QSpinBox::setEnabled);
+    ui->toggle_bos->setEnabled(!Core::System::GetInstance().IsPoweredOn());
 
     ui->layoutBox->setEnabled(!Settings::values.custom_layout);
 
@@ -47,6 +48,7 @@ void ConfigureGraphics::setConfiguration() {
         bg_color.setRgbF(Settings::values.bg_red, Settings::values.bg_green, Settings::values.bg_blue);
         ui->layout_bg->setStyleSheet("QPushButton { background-color: " + bg_color.name() + ";}");
     }
+    ui->toggle_bos->setChecked(Settings::values.use_bos);
     ui->layout_combobox->setCurrentIndex(static_cast<int>(Settings::values.layout_option));
     ui->swap_screen->setChecked(Settings::values.swap_screen);
 }
@@ -59,6 +61,7 @@ void ConfigureGraphics::applyConfiguration() {
     Settings::values.use_vsync = ui->toggle_vsync->isChecked();
     Settings::values.use_frame_limit = ui->toggle_frame_limit->isChecked();
     Settings::values.frame_limit = ui->frame_limit->value();
+    Settings::values.use_bos = ui->toggle_bos->isChecked();
     Settings::values.bg_red = bg_color.redF();
     Settings::values.bg_green = bg_color.greenF();
     Settings::values.bg_blue = bg_color.blueF();
