@@ -78,6 +78,9 @@ void Config::ReadValues() {
     Settings::values.use_vsync = qt_config->value("use_vsync", false).toBool();
     Settings::values.use_bos = qt_config->value("use_bos", false).toBool();
     Settings::values.frame_limit = qt_config->value("frame_limit", 100).toInt();
+    Settings::values.use_bos = qt_config->value("use_bos", true).toBool();
+    Settings::values.frame_option =
+        static_cast<Settings::FrameOption>(qt_config->value("frame_option").toInt());
 
     Settings::values.bg_red = qt_config->value("bg_red", 0.0).toFloat();
     Settings::values.bg_green = qt_config->value("bg_green", 0.0).toFloat();
@@ -244,6 +247,7 @@ void Config::SaveValues() {
     qt_config->setValue("use_vsync", Settings::values.use_vsync);
     qt_config->setValue("use_bos", Settings::values.use_bos);
     qt_config->setValue("frame_limit", Settings::values.frame_limit);
+    qt_config->setValue("frame_option", static_cast<int>(Settings::values.frame_option));
 
     // Cast to double because Qt's written float values are not human-readable
     qt_config->setValue("bg_red", (double)Settings::values.bg_red);

@@ -18,6 +18,13 @@ enum class LayoutOption {
     SideScreen,
 };
 
+enum class FrameOption {
+    zero,
+    single,
+    doubble,
+    triple,
+};
+
 namespace NativeButton {
 enum Values {
     A,
@@ -102,6 +109,7 @@ struct Values {
     bool use_bos;
     u16 frame_limit;
 
+    FrameOption frame_option;
     LayoutOption layout_option;
     bool swap_screen;
     bool custom_layout;
