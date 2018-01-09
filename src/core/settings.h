@@ -99,6 +99,7 @@ struct Values {
     bool use_vsync;
     bool use_frame_limit;
     u16 frame_limit;
+    bool use_bos;
 
     LayoutOption layout_option;
     bool swap_screen;

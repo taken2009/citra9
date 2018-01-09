@@ -1074,6 +1074,21 @@ void RasterizerCacheOpenGL::ValidateSurface(const Surface& surface, PAddr addr, 
             continue;
         }
 
+        if (Settings::values.use_bos) {
+          // HACK HACK HACK: Ignore format reinterpretation
+          // this is a placeholder for HW texture decoding/encoding
+          constexpr bool IGNORE_FORMAT_REINTERPRETING = true;
+          bool retry = false;
+          if (IGNORE_FORMAT_REINTERPRETING) {
+            for (const auto& pair : RangeFromInterval(dirty_regions, interval)) {
+              surface->invalid_regions.erase(pair.first & interval);
+               retry = true;
+             }
+           }
+          if (retry)
+              continue;
+            }
+
         // Load data from 3DS memory
         if (Kernel::g_current_process->codeset->program_id != 0x0004000000199200)
             FlushRegion(interval_start, interval_end - interval_start);
