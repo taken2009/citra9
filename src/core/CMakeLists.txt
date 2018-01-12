@@ -72,7 +72,9 @@ add_library(core STATIC
     frontend/camera/factory.cpp
     frontend/camera/factory.h
     frontend/camera/interface.cpp
+    frontend/camera/v4l2_camera.cpp
     frontend/camera/interface.h
+    frontend/camera/v4l2_camera.h
     frontend/emu_window.cpp
     frontend/emu_window.h
     frontend/framebuffer_layout.cpp

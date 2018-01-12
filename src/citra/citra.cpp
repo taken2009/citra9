@@ -33,6 +33,7 @@
 #include "common/scope_exit.h"
 #include "common/string_util.h"
 #include "core/core.h"
+#include "core/frontend/camera/factory.h"
 #include "core/file_sys/cia_container.h"
 #include "core/gdbstub/gdbstub.h"
 #include "core/hle/service/am/am.h"
@@ -300,6 +301,9 @@ int main(int argc, char** argv) {
         }
     }
 
+    #ifdef __linux__
+    RegisterFactory("V4L2", std::make_unique<V4L2CameraFactory>());
+    #endif
     while (emu_window->IsOpen()) {
         system.RunLoop();
     }

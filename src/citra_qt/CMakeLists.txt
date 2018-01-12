@@ -15,7 +15,9 @@ add_executable(citra-qt
     configuration/config.cpp
     configuration/config.h
     configuration/configure_audio.cpp
+    configuration/configure_camera.cpp
     configuration/configure_audio.h
+    configuration/configure_camera.h
     configuration/configure_debug.cpp
     configuration/configure_debug.h
     configuration/configure_dialog.cpp
@@ -50,7 +52,9 @@ add_executable(citra-qt
     debugger/registers.cpp
     debugger/registers.h
     debugger/wait_tree.cpp
+    droparea.cpp
     debugger/wait_tree.h
+    droparea.h
     game_list.cpp
     game_list.h
     game_list_p.h
@@ -75,6 +79,7 @@ set(UIS
     cheat_gui.ui
     configuration/configure.ui
     configuration/configure_audio.ui
+    configuration/configure_camera.ui
     configuration/configure_debug.ui
     configuration/configure_general.ui
     configuration/configure_graphics.ui
