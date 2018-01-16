@@ -111,9 +111,9 @@ FramebufferLayout LargeFrameLayout(unsigned width, unsigned height, bool swapped
     float emulation_aspect_ratio =
         swapped
             ? Core::kScreenBottomHeight * 4 /
-                  (Core::kScreenBottomWidth * 4.0f + Core::kScreenTopWidth)
+                  (Core::kScreenBottomWidth * 5.5f + Core::kScreenTopWidth * 0.35f)
             : Core::kScreenTopHeight * 4 /
-                  (Core::kScreenTopWidth * 4.0f + Core::kScreenBottomWidth);
+                  (Core::kScreenTopWidth * 5.5f + Core::kScreenBottomWidth * 0.35f);
     float large_screen_aspect_ratio = swapped ? BOT_SCREEN_ASPECT_RATIO : TOP_SCREEN_ASPECT_RATIO;
     float small_screen_aspect_ratio = swapped ? TOP_SCREEN_ASPECT_RATIO : BOT_SCREEN_ASPECT_RATIO;
 
@@ -122,7 +122,7 @@ FramebufferLayout LargeFrameLayout(unsigned width, unsigned height, bool swapped
         maxRectangle(screen_window_area, emulation_aspect_ratio);
     MathUtil::Rectangle<unsigned> large_screen =
         maxRectangle(total_rect, large_screen_aspect_ratio);
-    MathUtil::Rectangle<unsigned> fourth_size_rect = total_rect.Scale(.25f);
+    MathUtil::Rectangle<unsigned> fourth_size_rect = total_rect.Scale(.55f);
     MathUtil::Rectangle<unsigned> small_screen =
         maxRectangle(fourth_size_rect, small_screen_aspect_ratio);
 
