@@ -62,6 +62,15 @@
     <addaction name="separator"/>
     <addaction name="action_Select_Game_List_Root"/>
     <addaction name="menu_recent_files"/>
+    <widget class="QMenu" name="menu_Language">
+     <property name="title">
+      <string>Language</string>
+     </property>
+     <addaction name="action_Unload_Translation"/>
+     <addaction name="separator"/>
+     <addaction name="action_Load_Translation"/>
+    </widget>
+    <addaction name="menu_Language"/>
     <addaction name="separator"/>
     <addaction name="action_Exit"/>
    </widget>
@@ -284,6 +293,16 @@
    </property>
    <property name="text">
     <string>Current Room</string>
+   </property>
+  </action>
+  <action name="action_Unload_Translation">
+   <property name="text">
+    <string>English</string>
+   </property>
+  </action>
+  <action name="action_Load_Translation">
+   <property name="text">
+    <string>Load Translation File...</string>
    </property>
   </action>
   <action name="action_Fullscreen">
