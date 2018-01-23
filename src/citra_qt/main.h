@@ -79,6 +79,7 @@ private:
     void InitializeHotkeys();
 
     void SetDefaultUIGeometry();
+    void SyncMenuUISettings();
     void RestoreUIState();
 
     void ConnectWidgetEvents();
@@ -141,12 +142,14 @@ private slots:
     /// Called whenever a user selects the "File->Select Game List Root" menu item
     void OnMenuSelectGameListRoot();
     void OnMenuRecentFile();
-    void OnSwapScreens();
     void OnConfigure();
     void OnCheats();
     void OnToggleFilterBar();
     void OnDisplayTitleBars(bool);
     void ToggleFullscreen();
+    void ChangeScreenLayout();
+    void ToggleScreenLayout();
+    void OnSwapScreens();
     void ShowFullscreen();
     void HideFullscreen();
     void ToggleWindowMode();
