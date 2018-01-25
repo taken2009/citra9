@@ -108,6 +108,15 @@
      <addaction name="separator"/>
      <addaction name="action_Screen_Layout_Swap_Screens"/>
     </widget>
+    <widget class="QMenu" name="menu_Frame_limit">
+     <property name="title">
+      <string>Frame Limit</string>
+     </property>
+     <addaction name="action_frame_zero"/>
+     <addaction name="action_frame_single"/>
+     <addaction name="action_frame_doubble"/>
+     <addaction name="action_frame_triple"/>
+    </widget>
     <addaction name="action_Fullscreen"/>
     <addaction name="action_Single_Window_Mode"/>
     <addaction name="menu_Screen_Layout"/>
@@ -116,6 +125,7 @@
     <addaction name="action_Show_Filter_Bar"/>
     <addaction name="action_Show_Status_Bar"/>
     <addaction name="action_Show_Toolbar"/>
+    <addaction name="menu_Frame_limit"/>
     <addaction name="separator"/>
     <addaction name="menu_View_Debugging"/>
    </widget>
@@ -517,6 +527,38 @@
     <string>Swap Screens</string>
    </property>
   </action>
+   <action name="action_frame_zero">
+     <property name="checkable">
+       <bool>true</bool>
+     </property>
+     <property name="text">
+       <string>OFF</string>
+     </property>
+   </action>
+   <action name="action_frame_single">
+     <property name="checkable">
+       <bool>true</bool>
+     </property>
+     <property name="text">
+       <string>100%</string>
+     </property>
+   </action>
+   <action name="action_frame_doubble">
+     <property name="checkable">
+       <bool>true</bool>
+     </property>
+     <property name="text">
+       <string>200%</string>
+     </property>
+   </action>
+   <action name="action_frame_triple">
+     <property name="checkable">
+       <bool>true</bool>
+     </property>
+     <property name="text">
+       <string>300%</string>
+     </property>
+   </action>
   <action name="action_Check_For_Updates">
    <property name="text">
     <string>Check for Updates</string>
