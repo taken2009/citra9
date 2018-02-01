@@ -15,6 +15,7 @@
 #include "core/hle/kernel/process.h"
 #include "core/hle/kernel/vm_manager.h"
 #include "core/memory.h"
+#include "core/settings.h"
 
 static void InterpreterFallback(u32 pc, Dynarmic::Jit* jit, void* user_arg) {
     ARMul_State* state = static_cast<ARMul_State*>(user_arg);
@@ -52,7 +53,11 @@ static bool IsReadOnlyMemory(u32 vaddr) {
 }
 
 static void AddTicks(u64 ticks) {
-    CoreTiming::AddTicks(ticks);
+    if(Settings::values.FMV_hack){
+        CoreTiming::AddTicks(Settings::values.AddTicks);
+    }else{
+        CoreTiming::AddTicks(ticks);
+    }
 }
 
 static u64 GetTicksRemaining() {
