@@ -14,6 +14,7 @@
 #include "core/core_timing.h"
 #include "core/hle/kernel/svc.h"
 #include "core/memory.h"
+#include "core/settings.h"
 
 class DynarmicThreadContext final : public ARM_Interface::ThreadContext {
 public:
@@ -95,7 +96,11 @@ static bool IsReadOnlyMemory(u32 vaddr) {
 }
 
 static void AddTicks(u64 ticks) {
-    CoreTiming::AddTicks(ticks);
+    if(Settings::values.FMV_hack){
+        CoreTiming::AddTicks(Settings::values.AddTicks);
+    }else{
+        CoreTiming::AddTicks(ticks);
+    }
 }
 
 static u64 GetTicksRemaining() {
