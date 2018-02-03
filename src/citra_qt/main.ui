@@ -81,6 +81,7 @@
     <addaction name="action_Start"/>
     <addaction name="action_Pause"/>
     <addaction name="action_Stop"/>
+    <addaction name="action_Reset"/>
     <addaction name="separator"/>
     <addaction name="action_Configure"/>
     <addaction name="action_Cheats"/>
@@ -114,6 +115,7 @@
     <addaction name="action_Display_Dock_Widget_Headers"/>
     <addaction name="action_Show_Filter_Bar"/>
     <addaction name="action_Show_Status_Bar"/>
+    <addaction name="action_Show_Toolbar"/>
     <addaction name="separator"/>
     <addaction name="menu_View_Debugging"/>
    </widget>
@@ -149,6 +151,38 @@
    <addaction name="menu_Multiplayer"/>
    <addaction name="menu_Help"/>
   </widget>
+    <widget class="QToolBar" name="toolbar">
+      <property name="enabled">
+        <bool>true</bool>
+      </property>
+      <property name="windowTitle">
+        <string>Toolbar</string>
+      </property>
+      <property name="iconSize">
+        <size>
+          <width>35</width>
+          <height>30</height>
+        </size>
+      </property>
+      <property name="floatable">
+        <bool>false</bool>
+      </property>
+      <attribute name="toolBarArea">
+        <enum>TopToolBarArea</enum>
+      </attribute>
+      <attribute name="toolBarBreak">
+        <bool>false</bool>
+      </attribute>
+      <addaction name="action_Toolbar_Load_File"/>
+      <addaction name="action_Toolbar_Toggle_Fullscreen"/>
+      <addaction name="separator"/>
+      <addaction name="action_Toolbar_Start_Pause"/>
+      <addaction name="action_Toolbar_Stop"/>
+      <addaction name="action_Toolbar_Reset"/>
+      <addaction name="separator"/>
+      <addaction name="action_Toolbar_Configure"/>
+      <addaction name="action_Toolbar_Cheats"/>
+    </widget>
   <action name="action_Load_File">
    <property name="text">
     <string>Load File...</string>
@@ -191,6 +225,14 @@
    </property>
    <property name="text">
     <string>&amp;Stop</string>
+   </property>
+  </action>
+  <action name="action_Reset">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Reset</string>
    </property>
   </action>
   <action name="action_FAQ">
@@ -243,6 +285,14 @@
    </property>
    <property name="text">
     <string>Show Status Bar</string>
+   </property>
+  </action>
+  <action name="action_Show_Toolbar">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Tool Bar</string>
    </property>
   </action>
   <action name="action_Select_Game_List_Root">
@@ -313,6 +363,112 @@
     <string>Fullscreen</string>
    </property>
   </action>
+    <action name="action_Toolbar_Load_File">
+      <property name="icon">
+        <iconset resource="../../dist/toolbar_icons/toolbar_icons.qrc">
+          <normaloff>:/toolbar_icons/rc/load_file.png</normaloff>:/toolbar_icons/rc/load_file.png
+        </iconset>
+      </property>
+      <property name="text">
+        <string>Load File...</string>
+      </property>
+      <property name="toolTip">
+        <string>Load File </string>
+      </property>
+    </action>
+    <action name="action_Toolbar_Toggle_Fullscreen">
+      <property name="icon">
+        <iconset resource="../../dist/toolbar_icons/toolbar_icons.qrc">
+          <normaloff>:/toolbar_icons/rc/fullscreen.png</normaloff>:/toolbar_icons/rc/fullscreen.png
+        </iconset>
+      </property>
+      <property name="text">
+        <string>Toggle fullscreen</string>
+      </property>
+      <property name="toolTip">
+        <string>Toggle fullscreen</string>
+      </property>
+    </action>
+    <action name="action_Toolbar_Start_Pause">
+      <property name="enabled">
+        <bool>false</bool>
+      </property>
+      <property name="icon">
+        <iconset resource="../../dist/toolbar_icons/toolbar_icons.qrc">
+          <normaloff>:/toolbar_icons/rc/start.png</normaloff>:/toolbar_icons/rc/start.png
+        </iconset>
+      </property>
+      <property name="text">
+        <string>Start</string>
+      </property>
+      <property name="toolTip">
+        <string>Start emulation</string>
+      </property>
+    </action>
+    <action name="action_Toolbar_Stop">
+      <property name="enabled">
+        <bool>false</bool>
+      </property>
+      <property name="icon">
+        <iconset resource="../../dist/toolbar_icons/toolbar_icons.qrc">
+          <normaloff>:/toolbar_icons/rc/stop.png</normaloff>:/toolbar_icons/rc/stop.png
+        </iconset>
+      </property>
+      <property name="text">
+        <string>Stop</string>
+      </property>
+      <property name="toolTip">
+        <string>Stop emulation</string>
+      </property>
+    </action>
+    <action name="action_Toolbar_Reset">
+      <property name="enabled">
+        <bool>false</bool>
+      </property>
+      <property name="icon">
+        <iconset resource="../../dist/toolbar_icons/toolbar_icons.qrc">
+          <normaloff>:/toolbar_icons/rc/reset.png</normaloff>:/toolbar_icons/rc/reset.png
+        </iconset>
+      </property>
+      <property name="text">
+        <string>ResetGame</string>
+      </property>
+      <property name="toolTip">
+        <string>Reset Game</string>
+      </property>
+    </action>
+    <action name="action_Toolbar_Configure">
+      <property name="enabled">
+        <bool>true</bool>
+      </property>
+      <property name="icon">
+        <iconset resource="../../dist/toolbar_icons/toolbar_icons.qrc">
+          <normaloff>:/toolbar_icons/rc/configure.png</normaloff>:/toolbar_icons/rc/configure.png
+        </iconset>
+      </property>
+      <property name="text">
+        <string>Configure</string>
+      </property>
+      <property name="toolTip">
+        <string>Configure</string>
+      </property>
+    </action>
+    <action name="action_Toolbar_Cheats">
+      <property name="enabled">
+        <bool>false</bool>
+      </property>
+      <property name="icon">
+        <iconset resource="../../dist/toolbar_icons/toolbar_icons.qrc">
+          <normaloff>:/toolbar_icons/rc/cheats.png</normaloff>:/toolbar_icons/rc/cheats.png
+        </iconset>
+      </property>
+      <property name="text">
+        <string>Cheats</string>
+      </property>
+      <property name="toolTip">
+        <string>Cheats</string>
+      </property>
+    </action>
   <action name="action_Open_Maintenance_Tool">
    <property name="text">
     <string>Modify Citra Install</string>
@@ -378,6 +534,8 @@
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../dist/toolbar_icons/toolbar_icons.qrc"/>
+ </resources>
  <connections/>
 </ui>
