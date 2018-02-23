@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ConfigureCamera</class>
+ <widget class="QWidget" name="ConfigureCamera">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>346</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_1">
+   <item>
+    <widget class="ConfigureCameraIndividual" name="camera_outer_right">
+     <property name="cameraTitle">
+      <string>Outer Right Camera</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="ConfigureCameraIndividual" name="camera_outer_left">
+     <property name="cameraTitle">
+      <string>Outer Left Camera</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="ConfigureCameraIndividual" name="camera_inner">
+     <property name="cameraTitle">
+      <string>Inner Camera</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ConfigureCameraIndividual</class>
+   <extends>QWidget</extends>
+   <header>configuration/configure_camera_individual.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

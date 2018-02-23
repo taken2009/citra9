@@ -12,10 +12,16 @@ add_executable(citra-qt
     cheat_gui.cpp
     cheat_gui.h
     citra-qt.rc
+    camera/still_image_camera.cpp
+    camera/still_image_camera.h
     configuration/config.cpp
     configuration/config.h
     configuration/configure_audio.cpp
     configuration/configure_audio.h
+    configuration/configure_camera.cpp
+    configuration/configure_camera.h
+    configuration/configure_camera_individual.cpp
+    configuration/configure_camera_individual.h
     configuration/configure_debug.cpp
     configuration/configure_debug.h
     configuration/configure_dialog.cpp
@@ -91,6 +97,8 @@ set(UIS
     cheat_gui.ui
     configuration/configure.ui
     configuration/configure_audio.ui
+    configuration/configure_camera.ui
+    configuration/configure_camera_individual.ui
     configuration/configure_debug.ui
     configuration/configure_general.ui
     configuration/configure_graphics.ui
