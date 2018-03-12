@@ -66,9 +66,5 @@ public:
                                    ScreenInfo& screen_info) {
         return false;
     }
-
-    virtual bool AccelerateDrawBatch(bool is_indexed) {
-        return false;
-    }
 };
 } // namespace VideoCore

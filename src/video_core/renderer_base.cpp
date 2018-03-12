@@ -10,11 +10,11 @@
 #include "video_core/video_core.h"
 
 void RendererBase::RefreshRasterizerSetting() {
-    VideoCore::Renderer renderer = VideoCore::g_renderer_selection;
-    if (rasterizer == nullptr || renderer != rasterizer_active) {
-        rasterizer_active = renderer;
+    bool hw_renderer_enabled = VideoCore::g_hw_renderer_enabled;
+    if (rasterizer == nullptr || opengl_rasterizer_active != hw_renderer_enabled) {
+        opengl_rasterizer_active = hw_renderer_enabled;
 
-        if (renderer == VideoCore::Renderer::OpenGL) {
+        if (hw_renderer_enabled) {
             rasterizer = std::make_unique<RasterizerOpenGL>();
         } else {
             rasterizer = std::make_unique<VideoCore::SWRasterizer>();

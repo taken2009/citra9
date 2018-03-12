@@ -7,7 +7,6 @@
 #include <memory>
 #include "common/common_types.h"
 #include "video_core/rasterizer_interface.h"
-#include "video_core/video_core.h"
 
 class EmuWindow;
 
@@ -56,5 +55,5 @@ protected:
     int m_current_frame = 0;  ///< Current frame, should be set by the renderer
 
 private:
-    VideoCore::Renderer rasterizer_active = VideoCore::Renderer::Software;
+    bool opengl_rasterizer_active = false;
 };

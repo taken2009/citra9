@@ -21,11 +21,9 @@ public:
     void applyConfiguration();
     void retranslateUi();
 
-private slots:
-    void UpdateRenderer(int val);
-
 private:
     void setConfiguration();
 
+private:
     std::unique_ptr<Ui::ConfigureGraphics> ui;
 };
