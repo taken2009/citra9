@@ -29,7 +29,7 @@ struct Rectangle {
     T right;
     T bottom;
 
-    Rectangle() = default;
+    Rectangle() {}
 
     Rectangle(T left, T top, T right, T bottom)
         : left(left), top(top), right(right), bottom(bottom) {}

@@ -50,6 +50,7 @@ static void MapPages(PageTable& page_table, u32 base, u32 size, u8* memory, Page
 
         page_table.attributes[base] = type;
         page_table.pointers[base] = memory;
+        page_table.cached_res_count[base] = 0;
 
         base += 1;
         if (memory != nullptr)
@@ -195,13 +196,18 @@ void Write(const VAddr vaddr, const T data) {
         ASSERT_MSG(false, "Mapped memory page without a pointer @ %08X", vaddr);
         break;
     case PageType::RasterizerCachedMemory: {
-        RasterizerFlushVirtualRegion(vaddr, sizeof(T), FlushMode::Invalidate);
+        RasterizerFlushVirtualRegion(vaddr, sizeof(T), FlushMode::FlushAndInvalidate);
         std::memcpy(GetPointerFromVMA(vaddr), &data, sizeof(T));
         break;
     }
     case PageType::Special:
         WriteMMIO<T>(GetMMIOHandler(vaddr), vaddr, data);
         break;
+    case PageType::RasterizerCachedSpecial: {
+        RasterizerFlushVirtualRegion(vaddr, sizeof(T), FlushMode::FlushAndInvalidate);
+        WriteMMIO<T>(GetMMIOHandler(vaddr), vaddr, data);
+        break;
+    }
     default:
         UNREACHABLE();
     }
@@ -324,7 +330,7 @@ u8* GetPhysicalPointer(PAddr address) {
     return target_pointer;
 }
 
-void RasterizerMarkRegionCached(PAddr start, u32 size, bool cached) {
+void RasterizerMarkRegionCached(PAddr start, u32 size, int count_delta) {
     if (start == 0) {
         return;
     }
@@ -345,10 +351,14 @@ void RasterizerMarkRegionCached(PAddr start, u32 size, bool cached) {
         }
         VAddr vaddr = *maybe_vaddr;
 
-        PageType& page_type = current_page_table->attributes[vaddr >> PAGE_BITS];
+        u8& res_count = current_page_table->cached_res_count[vaddr >> PAGE_BITS];
+        ASSERT_MSG(count_delta <= UINT8_MAX - res_count,
+                   "Rasterizer resource cache counter overflow!");
+        ASSERT_MSG(count_delta >= -res_count, "Rasterizer resource cache counter underflow!");
 
-        if (cached) {
-            // Switch page type to cached if now cached
+        // Switch page type to cached if now cached
+        if (res_count == 0) {
+            PageType& page_type = current_page_table->attributes[vaddr >> PAGE_BITS];
             switch (page_type) {
             case PageType::Unmapped:
                 // It is not necessary for a process to have this region mapped into its address
@@ -361,8 +371,13 @@ void RasterizerMarkRegionCached(PAddr start, u32 size, bool cached) {
             default:
                 UNREACHABLE();
             }
-        } else {
-            // Switch page type to uncached if now uncached
+        }
+
+        res_count += count_delta;
+
+        // Switch page type to uncached if now uncached
+        if (res_count == 0) {
+            PageType& page_type = current_page_table->attributes[vaddr >> PAGE_BITS];
             switch (page_type) {
             case PageType::Unmapped:
                 // It is not necessary for a process to have this region mapped into its address
@@ -389,69 +404,52 @@ void RasterizerMarkRegionCached(PAddr start, u32 size, bool cached) {
 }
 
 void RasterizerFlushRegion(PAddr start, u32 size) {
-    if (VideoCore::g_renderer == nullptr) {
-        return;
+    if (VideoCore::g_renderer != nullptr) {
+        VideoCore::g_renderer->Rasterizer()->FlushRegion(start, size);
     }
-
-    VideoCore::g_renderer->Rasterizer()->FlushRegion(start, size);
-}
-
-void RasterizerInvalidateRegion(PAddr start, u32 size) {
-    if (VideoCore::g_renderer == nullptr) {
-        return;
-    }
-
-    VideoCore::g_renderer->Rasterizer()->InvalidateRegion(start, size);
 }
 
 void RasterizerFlushAndInvalidateRegion(PAddr start, u32 size) {
     // Since pages are unmapped on shutdown after video core is shutdown, the renderer may be
     // null here
-    if (VideoCore::g_renderer == nullptr) {
-        return;
+    if (VideoCore::g_renderer != nullptr) {
+        VideoCore::g_renderer->Rasterizer()->FlushAndInvalidateRegion(start, size);
     }
-
-    VideoCore::g_renderer->Rasterizer()->FlushAndInvalidateRegion(start, size);
 }
 
 void RasterizerFlushVirtualRegion(VAddr start, u32 size, FlushMode mode) {
     // Since pages are unmapped on shutdown after video core is shutdown, the renderer may be
     // null here
-    if (VideoCore::g_renderer == nullptr) {
-        return;
+    if (VideoCore::g_renderer != nullptr) {
+        VAddr end = start + size;
+
+        auto CheckRegion = [&](VAddr region_start, VAddr region_end) {
+            if (start >= region_end || end <= region_start) {
+                // No overlap with region
+                return;
+            }
+
+            VAddr overlap_start = std::max(start, region_start);
+            VAddr overlap_end = std::min(end, region_end);
+
+            PAddr physical_start = TryVirtualToPhysicalAddress(overlap_start).value();
+            u32 overlap_size = overlap_end - overlap_start;
+
+            auto* rasterizer = VideoCore::g_renderer->Rasterizer();
+            switch (mode) {
+            case FlushMode::Flush:
+                rasterizer->FlushRegion(physical_start, overlap_size);
+                break;
+            case FlushMode::FlushAndInvalidate:
+                rasterizer->FlushAndInvalidateRegion(physical_start, overlap_size);
+                break;
+            }
+        };
+
+        CheckRegion(LINEAR_HEAP_VADDR, LINEAR_HEAP_VADDR_END);
+        CheckRegion(NEW_LINEAR_HEAP_VADDR, NEW_LINEAR_HEAP_VADDR_END);
+        CheckRegion(VRAM_VADDR, VRAM_VADDR_END);
     }
-
-    VAddr end = start + size;
-
-    auto CheckRegion = [&](VAddr region_start, VAddr region_end) {
-        if (start >= region_end || end <= region_start) {
-            // No overlap with region
-            return;
-        }
-
-        VAddr overlap_start = std::max(start, region_start);
-        VAddr overlap_end = std::min(end, region_end);
-
-        PAddr physical_start = TryVirtualToPhysicalAddress(overlap_start).value();
-        u32 overlap_size = overlap_end - overlap_start;
-
-        auto* rasterizer = VideoCore::g_renderer->Rasterizer();
-        switch (mode) {
-        case FlushMode::Flush:
-            rasterizer->FlushRegion(physical_start, overlap_size);
-            break;
-        case FlushMode::Invalidate:
-            rasterizer->InvalidateRegion(physical_start, overlap_size);
-            break;
-        case FlushMode::FlushAndInvalidate:
-            rasterizer->FlushAndInvalidateRegion(physical_start, overlap_size);
-            break;
-        }
-    };
-
-    CheckRegion(LINEAR_HEAP_VADDR, LINEAR_HEAP_VADDR_END);
-    CheckRegion(NEW_LINEAR_HEAP_VADDR, NEW_LINEAR_HEAP_VADDR_END);
-    CheckRegion(VRAM_VADDR, VRAM_VADDR_END);
 }
 
 u8 Read8(const VAddr addr) {
@@ -572,8 +570,16 @@ void WriteBlock(const Kernel::Process& process, const VAddr dest_addr, const voi
         }
         case PageType::RasterizerCachedMemory: {
             RasterizerFlushVirtualRegion(current_vaddr, static_cast<u32>(copy_amount),
-                                         FlushMode::Invalidate);
+                                         FlushMode::FlushAndInvalidate);
             std::memcpy(GetPointerFromVMA(process, current_vaddr), src_buffer, copy_amount);
+            break;
+        }
+        case PageType::RasterizerCachedSpecial: {
+            MMIORegionPointer handler = GetMMIOHandler(page_table, current_vaddr);
+            DEBUG_ASSERT(handler);
+            RasterizerFlushVirtualRegion(current_vaddr, static_cast<u32>(copy_amount),
+                                         FlushMode::FlushAndInvalidate);
+            handler->WriteBlock(current_vaddr, src_buffer, copy_amount);
             break;
         }
         default:
@@ -624,8 +630,16 @@ void ZeroBlock(const Kernel::Process& process, const VAddr dest_addr, const size
         }
         case PageType::RasterizerCachedMemory: {
             RasterizerFlushVirtualRegion(current_vaddr, static_cast<u32>(copy_amount),
-                                         FlushMode::Invalidate);
+                                         FlushMode::FlushAndInvalidate);
             std::memset(GetPointerFromVMA(process, current_vaddr), 0, copy_amount);
+            break;
+        }
+        case PageType::RasterizerCachedSpecial: {
+            MMIORegionPointer handler = GetMMIOHandler(page_table, current_vaddr);
+            DEBUG_ASSERT(handler);
+            RasterizerFlushVirtualRegion(current_vaddr, static_cast<u32>(copy_amount),
+                                         FlushMode::FlushAndInvalidate);
+            handler->WriteBlock(current_vaddr, zeros.data(), copy_amount);
             break;
         }
         default:
