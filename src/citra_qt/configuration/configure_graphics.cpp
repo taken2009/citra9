@@ -22,9 +22,6 @@ ConfigureGraphics::ConfigureGraphics(QWidget* parent)
 
     ui->layoutBox->setEnabled(!Settings::values.custom_layout);
 
-    connect(ui->renderer_comboBox, SIGNAL(currentIndexChanged(int)), this,
-            SLOT(UpdateRenderer(int)));
-
     connect(ui->layout_bg, SIGNAL (released()), this, SLOT (showLayoutBackgroundDialog()));
 }
 
