@@ -1193,6 +1193,7 @@ void GMainWindow::ToggleScreenLayout() {
     }
 
     Settings::values.layout_option = new_layout;
+    SyncMenuUISettings();
     Settings::Apply();
 }
 
@@ -1261,6 +1262,7 @@ void GMainWindow::ToggleFramelimit(){
     }
 
     Settings::values.frame_option = newlimit;
+    FramelimitUISettings();
     Settings::Apply();
 }
 
