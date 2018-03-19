@@ -110,9 +110,9 @@ FramebufferLayout LargeFrameLayout(unsigned width, unsigned height, bool swapped
     float window_aspect_ratio = static_cast<float>(height) / width;
     float emulation_aspect_ratio =
         swapped ? Core::kScreenBottomHeight * 4 /
-                      (Core::kScreenBottomWidth * 5.5f + Core::kScreenTopWidth * 0.35f)
+                      (Core::kScreenBottomWidth * 6.0f + Core::kScreenTopWidth * 0.61f)
                 : Core::kScreenTopHeight * 4 /
-                      (Core::kScreenTopWidth * 5.5f + Core::kScreenBottomWidth * 0.35f);
+                      (Core::kScreenTopWidth * 5.5f + Core::kScreenBottomWidth * 0.33f);
     float large_screen_aspect_ratio = swapped ? BOT_SCREEN_ASPECT_RATIO : TOP_SCREEN_ASPECT_RATIO;
     float small_screen_aspect_ratio = swapped ? TOP_SCREEN_ASPECT_RATIO : BOT_SCREEN_ASPECT_RATIO;
 
